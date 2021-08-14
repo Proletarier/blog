@@ -159,7 +159,7 @@ class ArrayQueue {
 
     ![image-queue](images/huanxing.png) 
 
-### 代码实现
+#### 代码实现
 
 ````java
 package com.atguigu.queue;
