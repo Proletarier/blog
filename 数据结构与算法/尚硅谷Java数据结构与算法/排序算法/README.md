@@ -81,6 +81,8 @@
 
 ![image-5](images/6.gif) 
 
+#### 代码示例
+
 ````java
     public static void insertSort(int[] arr) {
         int insertValue = 0;
@@ -106,8 +108,23 @@
 
 ![image-5](images/6.png) 
 
+#### 代码示例
 ````java
+    public static void shellSortMove(int[] arr) {
 
+        for (int gap = arr.length / 2; gap > 0; gap /= 2) {
+            for (int i = gap; i < arr.length; i++) {
+                int j = i;
+                int temp = arr[j];
+                while (j - gap >= 0 && temp < arr[j - gap]){
+                    arr[j] = arr[j-gap];
+                    j -= gap;
+                }
+                arr[j] = temp;
+            }
+        }
+
+    }
 ````
 
 ### 快速排序
@@ -120,6 +137,7 @@
 
 ![image-5](images/7.jpg) 
 
+#### 代码示例
 ````java
 
 ````
