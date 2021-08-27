@@ -139,5 +139,32 @@
 
 #### 代码示例
 ````java
+  public static  void quickSort(int[] arr, int left, int right){
 
+        if(left < right){
+            int key = arr[left];
+            int i = left;
+            int j = right;
+            while (i < j) {
+                while (i < j && arr[j] > key){
+                    j --;
+                }
+                if (i < j){
+                    arr[i] = arr[j];
+                    i++;
+                }
+                while (i < j && arr[i] < key){
+                    i++;
+                }
+                if(i < j){
+                    arr[j] = arr[i];
+                    j --;
+                }
+            }
+            arr[i] = key;
+            quickSort(arr,left,i-1);
+            quickSort(arr,j+1,right);
+
+        }
+    }
 ````
