@@ -168,3 +168,87 @@
         }
     }
 ````
+## 归并排序
+归并排序（MERGE-SORT）是利用归并的思想实现的排序方法，该算法采用经典的分治（divide-and-conquer）策略（分治法将问题分(divide)成一些小的问题然后递归求解，而治(conquer)的阶段则将分的阶段得到的各答案"修补"在一起，即分而治之)
+
+![image-5](images/7.png) 
+
+
+归并排序思想示意图2-合并相邻有序子序列:
+
+再来看看治阶段，我们需要将两个已经有序的子序列合并成一个有序序列，比如上图中的最后一次合并，要将[4,5,7,8]和[1,2,3,6]两个已经有序的子序列，合并为最终序列[1,2,3,4,5,6,7,8]，来看下实现步骤
+
+![image-5](images/8.png)
+
+#### 代码示例
+
+````java
+
+    public static void main(String[] args) {
+        int[] arr = new int[80000000];
+        for (int i = 0; i < 80000000; i++) {
+            arr[i] = (int) (Math.random() * 800000000); //生成一个[0, 8000000) 数
+        }
+        long startTime = System.currentTimeMillis() / 1000;
+        //测试冒泡排序
+        //bubbleSort(arr);
+        //selectSort(arr);
+        //shellSortMove(arr);
+        mergerSort(arr, 0, arr.length - 1, new int[arr.length]);
+        long endTime = System.currentTimeMillis() / 1000;
+
+        System.out.println("排序后的时间是= " + (endTime - startTime) + "秒");
+        //System.out.println(Arrays.toString(arr));
+    }
+
+  
+  public static void mergerSort(int[] arr, int left, int right, int[] temp) {
+
+        if (left < right) {
+            int mid = (left + right) / 2;
+            mergerSort(arr, left, mid, temp);
+            mergerSort(arr, mid + 1, right, temp);
+            merge(arr, left, mid, right, temp);
+        }
+
+    }
+
+    public static void merge(int[] arr, int left, int mid, int right, int[] temp) {
+
+        int i = left;
+        int j = mid + 1;
+        int t = 0;
+        while (i <= mid && j <= right) {
+            if (arr[i] < arr[j]) {
+                temp[t] = arr[i];
+                i++;
+                t++;
+            } else {
+                temp[t] = arr[j];
+                j++;
+                t++;
+            }
+        }
+
+
+        while (i <= mid) {
+            temp[t] = arr[i];
+            i++;
+            t++;
+        }
+
+        while (j <= right) {
+            temp[t] = arr[j];
+            j++;
+            t++;
+        }
+
+        t = 0;
+        int tempLeft = left;
+        while(tempLeft <= right) {
+            arr[tempLeft] = temp[t];
+            t += 1;
+            tempLeft += 1;
+        }
+    }
+````
