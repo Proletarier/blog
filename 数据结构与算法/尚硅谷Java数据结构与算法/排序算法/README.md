@@ -252,3 +252,76 @@
         }
     }
 ````
+
+### 基数排序
+1) 基数排序（radix sort）属于“分配式排序”（distribution sort），又称“桶子法”（bucket sort）或bin sort，顾名思义，它是通过键值的各个位的值，将要排序的元素分配至某些“桶”中，达到排序的作用
+2) 基数排序法是属于稳定性的排序，基数排序法的是效率高的稳定性排序法
+3) 基数排序(Radix Sort)是桶排序的扩展
+4) 基数排序是1887年赫尔曼·何乐礼发明的。它是这样实现的：将整数按位数切割成不同的数字，然后按每个位数分别比较。
+
+#### 基数排序基本思想
+
+1) 将所有待比较数值统一为同样的数位长度，数位较短的数前面补零。然后，从最低位开始，依次进行一次排序。这样从最低位排序一直到最高位排序完成以后, 数列就变成一个有序序列。
+
+![image-10](images/10.png)
+![image-10](images/11.png)
+![image-10](images/12.png)
+
+#### 代码示例
+````java
+    public static void radixSort(int[] arr) {
+
+        int max = arr[0];
+        for (int i = 1; i < arr.length; i++) {
+            if (arr[i] > max) {
+                max = arr[i];
+            }
+        }
+
+        int maxLength = String.valueOf(max).length();
+
+        int[][] bucket = new int[10][arr.length];
+        int[] bucketElementCounts = new int[10];
+
+
+        for (int i = 0, n = 1; i < maxLength; i++, n *= 10) {
+            for (int j = 0; j < arr.length; j++) {
+                int digitOfElement = arr[j] / n % 10;
+                bucket[digitOfElement][bucketElementCounts[digitOfElement]] = arr[j];
+                bucketElementCounts[digitOfElement]++;
+            }
+
+            int index = 0;
+            for (int k = 0; k < bucketElementCounts.length; k++) {
+                if (bucketElementCounts[k] != 0) {
+                    for (int l = 0; l < bucketElementCounts[k]; l++) {
+                        arr[index] = bucket[k][l];
+                        index++;
+                    }
+                }
+                bucketElementCounts[k] = 0;
+            }
+        }
+
+    }
+
+````
+
+1) 基数排序是对传统桶排序的扩展，速度很快. 
+2) 基数排序是经典的空间换时间的方式，占用内存很大, 当对海量数据排序时，容易造成 OutOfMemoryError 。 
+3) 基数排序时稳定的。[注:假定在待排序的记录序列中，存在多个具有相同的关键字的记录，若经过排序，这些 记录的相对次序保持不变，即在原序列中，r[i]=r[j]，且 r[i]在 r[j]之前，而在排序后的序列中，r[i]仍在 r[j]之前， 则称这种排序算法是稳定的；否则称为不稳定的]
+
+### 常用排序算法总结和对比
+![image-10](images/13.png)
+
+### 相关术语解释：
+1) 稳定：如果 a 原本在 b 前面，而 a=b，排序之后 a 仍然在 b 的前面； 
+2) 不稳定：如果 a 原本在 b 的前面，而 a=b，排序之后 a 可能会出现在 b 的后面； 
+3) 内排序：所有排序操作都在内存中完成； 
+4) 外排序：由于数据太大，因此把数据放在磁盘中，而排序通过磁盘和内存的数据传输才能进行； 
+5) 时间复杂度： 一个算法执行所耗费的时间。 
+6) 空间复杂度：运行完一个程序所需内存的大小。 
+7) n: 数据规模 
+8) k: “桶”的个数 
+9) In-place: 不占用额外内存 
+10) Out-place: 占用额外内存
