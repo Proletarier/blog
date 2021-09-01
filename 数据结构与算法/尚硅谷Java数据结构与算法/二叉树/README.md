@@ -186,4 +186,82 @@ class HeroNode {
 
 ## 二叉树-查找指定节点
    ![image-21](images/5.png) 
-1
+
+````java
+   public HeroNode preOrderSearch(int no) {
+        if(this.no == no){
+            return this;
+        }
+        if(this.left !=null){
+            return this.left.preOrderSearch(no);
+        }
+
+        if(this.right !=null){
+            return this.right.preOrderSearch(no);
+        }
+        return  null;
+    }
+
+    public HeroNode infixOrderSearch(int no) {
+
+        HeroNode resNode = null;
+        if(this.left !=null){
+            resNode = this.left.preOrderSearch(no);
+        }
+
+        if(resNode != null) {
+            return resNode;
+        }
+
+        if(this.no == no){
+            return this;
+        }
+
+        if(this.right !=null){
+            resNode = this.right.preOrderSearch(no);
+        }
+        return  resNode;
+    }
+
+    public HeroNode postOrderSearch(int no) {
+
+        //判断当前结点的左子节点是否为空，如果不为空，则递归后序查找
+        HeroNode resNode = null;
+        if(this.left != null) {
+            resNode = this.left.postOrderSearch(no);
+        }
+        if(resNode != null) {//说明在左子树找到
+            return resNode;
+        }
+
+        //如果左子树没有找到，则向右子树递归进行后序遍历查找
+        if(this.right != null) {
+            resNode = this.right.postOrderSearch(no);
+        }
+        if(resNode != null) {
+            return resNode;
+        }
+        System.out.println("进入后序查找");
+        //如果左右子树都没有找到，就比较当前结点是不是
+        if(this.no == no) {
+            return this;
+        }
+        return resNode;
+    }
+
+````
+
+## 二叉树-删除节点
+
+1) 如果删除的节点是叶子节点，则删除该节点 
+2) 如果删除的节点是非叶子节点，则删除该子树.
+
+## 顺序存储二叉树
+从数据存储来看，数组存储方式和树的存储方式可以相互转换，即数组可以转换成树，树也可以转换成数组
+
+1) 顺序二叉树通常只考虑完全二叉树 
+2) 第 n 个元素的左子节点为 2 * n + 1 
+3) 第 n 个元素的右子节点为 2 * n + 2 
+4) 第 n 个元素的父节点为 (n-1) / 2 5) n : 表示二叉树中的第几个元素(按 0 开始编号如图所示)
+
+   ![image-21](images/6.png) 
