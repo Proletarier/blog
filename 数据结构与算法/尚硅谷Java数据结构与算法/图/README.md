@@ -271,3 +271,6 @@ public class Graph {
 }
 
 ````
+## 图的深度优先VS 广度优先
+  ![image-1](images/6.png)
+
