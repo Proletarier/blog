@@ -71,7 +71,10 @@ public class ViolenceMatch {
 3) 要求：使用 KMP 算法完成判断，不能使用简单的暴力匹配算法.
 
 ## 思路分析图解
-
+1) 举例来说，有一个字符串 Str1 = “BBC ABCDAB ABCDABCDABDE”，判断，里面是否包含另一个字符串 Str2 = “ABCDABD”？ 1.首先，用 Str1 的第一个字符和 Str2 的第一个字符去比较，不符合，关键词向
+后移动一位
+ ![image-1](images/1.png) 
+ 
 ## 代码示例
 
 ````java
