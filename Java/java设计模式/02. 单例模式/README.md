@@ -70,7 +70,7 @@ class Singleton {
 4) 结论：这种单例模式可用，可能造成内存浪费
 
 
-## 饿汉式（静态代码块)
+### 饿汉式（静态代码块)
 
 ![image-1](images/1.png)
 
@@ -79,3 +79,81 @@ class Singleton {
 中，也是在类装载的时候，就执行静态代码块中的代码，初始化类的实例。优
 缺点和上面是一样的。
 2) 结论：这种单例模式可用，但是可能造成内存浪费
+
+### 懒汉式(线程不安全)
+![image-1](images/2.png)
+
+1) 起到了Lazy Loading的效果，但是只能在单线程下使用。
+2) 如果在多线程下，一个线程进入了if (singleton == null)判断语句块，还未来得及
+往下执行，另一个线程也通过了这个判断语句，这时便会产生多个实例。所以
+在多线程环境下不可使用这种方式
+3) 结论：在实际开发中，不要使用这种方式.
+
+### 懒汉式(线程安全，同步方法)
+
+![image-1](images/3.png)
+1) 解决了线程不安全问题
+2) 效率太低了，每个线程在想获得类的实例时候，执行getInstance()方法都要进行
+同步。而其实这个方法只执行一次实例化代码就够了，后面的想获得该类实例，
+直接return就行了。方法进行同步效率太低
+3) 结论：在实际开发中，不推荐使用这种方式
+
+### 懒汉式(线程安全，同步代码块)
+![image-1](images/4.png)
+
+1) 这种方式，本意是想对第四种实现方式的改进，因为前面同步方法效率太低，
+改为同步产生实例化的的代码块
+2) 但是这种同步并不能起到线程同步的作用。跟第3种实现方式遇到的情形一
+致，假如一个线程进入了if (singleton == null)判断语句块，还未来得及往下执行，
+另一个线程也通过了这个判断语句，这时便会产生多个实例
+3) 结论：在实际开发中，不能使用这种
+
+## 双重检查
+
+````java
+package com.atguigu.singleton.type6;
+
+
+public class SingletonTest06 {
+
+	public static void main(String[] args) {
+		System.out.println("双重检查");
+		Singleton instance = Singleton.getInstance();
+		Singleton instance2 = Singleton.getInstance();
+		System.out.println(instance == instance2); // true
+		System.out.println("instance.hashCode=" + instance.hashCode());
+		System.out.println("instance2.hashCode=" + instance2.hashCode());
+		
+	}
+
+}
+
+// 懒汉式(线程安全，同步方法)
+class Singleton {
+	private static volatile Singleton instance;
+	
+	private Singleton() {}
+	
+	//提供一个静态的公有方法，加入双重检查代码，解决线程安全问题, 同时解决懒加载问题
+	//同时保证了效率, 推荐使用
+	
+	public static synchronized Singleton getInstance() {
+		if(instance == null) {
+			synchronized (Singleton.class) {
+				if(instance == null) {
+					instance = new Singleton();
+				}
+			}
+			
+		}
+		return instance;
+	}
+}
+````
+
+1) Double-Check 概念是多线程开发中常使用到的，如代码中所示，我们进行了两次 if (singleton == null)检查，这
+样就可以保证线程安全了。
+2) 这样，实例化代码只用执行一次，后面再次访问时，判断 if (singleton == null)，直接 return 实例化对象，也避
+免的反复进行方法同步.
+3) 线程安全；延迟加载；效率较高
+4) 结论：在实际开发中，推荐使用这种单例设计模式
