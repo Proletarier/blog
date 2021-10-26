@@ -27,6 +27,67 @@
 3) 前面我们克隆羊就是浅拷贝
 4) 浅拷贝是使用默认的 clone()方
 
+````java
+package com.atguigu.prototype.improve;
+
+public class Sheep implements Cloneable {
+	private String name;
+	private int age;
+	private String color;
+	private String address = "蒙古羊";
+	public Sheep friend; //是对象, 克隆是会如何处理
+	public Sheep(String name, int age, String color) {
+		super();
+		this.name = name;
+		this.age = age;
+		this.color = color;
+	}
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	public String getColor() {
+		return color;
+	}
+	public void setColor(String color) {
+		this.color = color;
+	}
+	
+	
+	
+	@Override
+	public String toString() {
+		return "Sheep [name=" + name + ", age=" + age + ", color=" + color + ", address=" + address + "]";
+	}
+	//克隆该实例，使用默认的clone方法来完成
+	@Override
+	protected Object clone()  {
+		
+		Sheep sheep = null;
+		try {
+			sheep = (Sheep)super.clone();
+		} catch (Exception e) {
+			// TODO: handle exception
+			System.out.println(e.getMessage());
+		}
+		// TODO Auto-generated method stub
+		return sheep;
+	}
+	
+	
+}
+
+````
+
+
 ### 深拷贝
 1) 复制对象的所有基本数据类型的成员变量值
 2) 为所有引用数据类型的成员变量申请存储空间，并复制每个引用数据类型成员变
@@ -34,6 +95,116 @@
 整个对象进行拷贝
 3) 深拷贝实现方式1：重写clone方法来实现深拷贝
 4) 深拷贝实现方式2：通过对象序列化实现深拷贝(推荐)
+
+````java
+package com.atguigu.prototype.deepclone;
+
+import java.io.Serializable;
+
+public class DeepCloneableTarget implements Serializable, Cloneable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private String cloneName;
+
+	private String cloneClass;
+
+	//构造器
+	public DeepCloneableTarget(String cloneName, String cloneClass) {
+		this.cloneName = cloneName;
+		this.cloneClass = cloneClass;
+	}
+
+	//因为该类的属性，都是String , 因此我们这里使用默认的clone完成即可
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return super.clone();
+	}
+}
+
+````
+
+````java
+package com.atguigu.prototype.deepclone;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
+
+public class DeepProtoType implements Serializable, Cloneable{
+	
+	public String name; //String 属性
+	public DeepCloneableTarget deepCloneableTarget;// 引用类型
+	public DeepProtoType() {
+		super();
+	}
+	
+	
+	//深拷贝 - 方式 1 使用clone 方法
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		
+		Object deep = null;
+		//这里完成对基本数据类型(属性)和String的克隆
+		deep = super.clone(); 
+		//对引用类型的属性，进行单独处理
+		DeepProtoType deepProtoType = (DeepProtoType)deep;
+		deepProtoType.deepCloneableTarget  = (DeepCloneableTarget)deepCloneableTarget.clone();
+		
+		// TODO Auto-generated method stub
+		return deepProtoType;
+	}
+	
+	//深拷贝 - 方式2 通过对象的序列化实现 (推荐)
+	
+	public Object deepClone() {
+		
+		//创建流对象
+		ByteArrayOutputStream bos = null;
+		ObjectOutputStream oos = null;
+		ByteArrayInputStream bis = null;
+		ObjectInputStream ois = null;
+		
+		try {
+			
+			//序列化
+			bos = new ByteArrayOutputStream();
+			oos = new ObjectOutputStream(bos);
+			oos.writeObject(this); //当前这个对象以对象流的方式输出
+			
+			//反序列化
+			bis = new ByteArrayInputStream(bos.toByteArray());
+			ois = new ObjectInputStream(bis);
+			DeepProtoType copyObj = (DeepProtoType)ois.readObject();
+			
+			return copyObj;
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+			e.printStackTrace();
+			return null;
+		} finally {
+			//关闭流
+			try {
+				bos.close();
+				oos.close();
+				bis.close();
+				ois.close();
+			} catch (Exception e2) {
+				// TODO: handle exception
+				System.out.println(e2.getMessage());
+			}
+		}
+		
+	}
+	
+}
+````
 
 ## 原型模式的注意事项和细节
 1) 创建新的对象比较复杂时，可以利用原型模式简化对象的创建过程，同时也能够提
