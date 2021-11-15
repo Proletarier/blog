@@ -89,6 +89,198 @@ public class Client {
 
 ````
 ````java
+package com.atguigu.memento.theory;
+
+public class Memento {
+	private String state;
+
+	//构造器
+	public Memento(String state) {
+		super();
+		this.state = state;
+	}
+
+	public String getState() {
+		return state;
+	}
+}
+
 ````
 ````java
+package com.atguigu.memento.theory;
+
+public class Originator {
+
+	private String state;//状态信息
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
+	}
+	
+	//编写一个方法，可以保存一个状态对象 Memento
+	//因此编写一个方法，返回 Memento
+	public Memento saveStateMemento() {
+		return new Memento(state);
+	}
+	
+	//通过备忘录对象，恢复状态
+	public void getStateFromMemento(Memento memento) {
+		state = memento.getState();
+	}
+}
 ````
+
+## 游戏角色恢复状态实例
+1) 应用实例要求
+游戏角色有攻击力和防御力，在大战 Boss 前保存自身的状态(攻击力和防御力)，当大战 Boss 后攻击力和防御力下降，从备忘录对象恢复到大战前的状态
+2) 思路分析和图解(类图)
+![image-12](images/3.png)
+
+````java
+package com.atguigu.memento.game;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
+//守护者对象, 保存游戏角色的状态
+public class Caretaker {
+
+	//如果只保存一次状态
+	private Memento  memento;
+	//对GameRole 保存多次状态
+	//private ArrayList<Memento> mementos;
+	//对多个游戏角色保存多个状态
+	//private HashMap<String, ArrayList<Memento>> rolesMementos;
+
+	public Memento getMemento() {
+		return memento;
+	}
+
+	public void setMemento(Memento memento) {
+		this.memento = memento;
+	}
+	
+	
+}
+
+````
+````java
+package com.atguigu.memento.game;
+
+public class Client {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		//创建游戏角色
+		GameRole gameRole = new GameRole();
+		gameRole.setVit(100);
+		gameRole.setDef(100);
+		
+		System.out.println("和boss大战前的状态");
+		gameRole.display();
+		
+		//把当前状态保存caretaker
+		Caretaker caretaker = new Caretaker();
+		caretaker.setMemento(gameRole.createMemento());
+		
+		System.out.println("和boss大战~~~");
+		gameRole.setDef(30);
+		gameRole.setVit(30);
+		
+		gameRole.display();
+		
+		System.out.println("大战后，使用备忘录对象恢复到站前");
+		
+		gameRole.recoverGameRoleFromMemento(caretaker.getMemento());
+		System.out.println("恢复后的状态");
+		gameRole.display();
+	}
+
+}
+
+````
+````java
+package com.atguigu.memento.game;
+
+public class GameRole {
+
+	private int vit;
+	private int def;
+	
+	//创建Memento ,即根据当前的状态得到Memento
+	public Memento createMemento() {
+		return new Memento(vit, def);
+	}
+	
+	//从备忘录对象，恢复GameRole的状态
+	public void recoverGameRoleFromMemento(Memento memento) {
+		this.vit = memento.getVit();
+		this.def = memento.getDef();
+	}
+	
+	//显示当前游戏角色的状态
+	public void display() {
+		System.out.println("游戏角色当前的攻击力：" + this.vit + " 防御力: " + this.def);
+	}
+
+	public int getVit() {
+		return vit;
+	}
+
+	public void setVit(int vit) {
+		this.vit = vit;
+	}
+
+	public int getDef() {
+		return def;
+	}
+
+	public void setDef(int def) {
+		this.def = def;
+	}
+	
+	
+}
+
+````
+````java
+package com.atguigu.memento.game;
+
+public class Memento {
+
+	//攻击力
+	private int vit;
+	//防御力
+	private int def;
+	public Memento(int vit, int def) {
+		super();
+		this.vit = vit;
+		this.def = def;
+	}
+	public int getVit() {
+		return vit;
+	}
+	public void setVit(int vit) {
+		this.vit = vit;
+	}
+	public int getDef() {
+		return def;
+	}
+	public void setDef(int def) {
+		this.def = def;
+	}
+		
+}
+
+````
+
+## 备忘录模式的注意事项和细节
+1) 给用户提供了一种可以恢复状态的机制，可以使用户能够比较方便地回到某个历史的状态
+2) 实现了信息的封装，使得用户不需要关心状态的保存细节
+3) 如果类的成员变量过多，势必会占用比较大的资源，而且每一次保存都会消耗一定的内存, 这个需要注意
+4) 适用的应用场景：1、后悔药。 2、打游戏时的存档。 3、Windows 里的 ctri + z。 4、IE 中的后退。 4、数据库的事务管理
+5) 为了节约内存，备忘录模式可以和原型模式配合使用
