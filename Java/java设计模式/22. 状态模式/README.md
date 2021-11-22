@@ -354,3 +354,360 @@ public abstract class State {
 }
 
 ````
+
+## 状态模式在实际项目-借贷平台
+
+1) 借贷平台的订单，有审核-发布-抢单 等等 步骤，随着操作的不同，会改变订单的状态, 项目中的这个模块实现就会使用到状态模式
+2) 通常通过 if/else 判断订单的状态，从而实现不同的逻辑，伪代码如下
+3) 使用状态模式完成 借贷平台项目的审核模块 [设计+代码]
+
+````java
+package com.atguigu.money;
+
+public abstract class AbstractState implements State {
+
+	protected static final RuntimeException EXCEPTION = new RuntimeException("操作流程不允许");
+
+    @Override
+    public void checkEvent(Context context) {
+        throw EXCEPTION;
+    }
+
+    @Override
+    public void checkFailEvent(Context context) {
+        throw EXCEPTION;
+    }
+
+    @Override
+    public void makePriceEvent(Context context) {
+        throw EXCEPTION;
+    }
+
+    @Override
+    public void acceptOrderEvent(Context context) {
+        throw EXCEPTION;
+    }
+
+    @Override
+    public void notPeopleAcceptEvent(Context context) {
+        throw EXCEPTION;
+    }
+
+    @Override
+    public void payOrderEvent(Context context) {
+        throw EXCEPTION;
+    }
+
+    @Override
+    public void orderFailureEvent(Context context) {
+        throw EXCEPTION;
+    }
+
+    @Override
+    public void feedBackEvent(Context context) {
+        throw EXCEPTION;
+    }
+}
+
+````
+````java
+package com.atguigu.money;
+
+//各种具体状态类
+class FeedBackState extends AbstractState {
+
+	@Override
+	public String getCurrentState() {
+		return StateEnum.FEED_BACKED.getValue();
+	}
+}
+
+class GenerateState extends AbstractState {
+
+	@Override
+	public void checkEvent(Context context) {
+		context.setState(new ReviewState());
+	}
+
+	@Override
+	public void checkFailEvent(Context context) {
+		context.setState(new FeedBackState());
+	}
+
+	@Override
+	public String getCurrentState() {
+		return StateEnum.GENERATE.getValue();
+	}
+}
+
+class NotPayState extends AbstractState {
+
+	@Override
+	public void payOrderEvent(Context context) {
+		context.setState(new PaidState());
+	}
+
+	@Override
+	public void feedBackEvent(Context context) {
+		context.setState(new FeedBackState());
+	}
+
+	@Override
+	public String getCurrentState() {
+		return StateEnum.NOT_PAY.getValue();
+	}
+}
+
+class PaidState extends AbstractState {
+
+	@Override
+	public void feedBackEvent(Context context) {
+		context.setState(new FeedBackState());
+	}
+
+	@Override
+	public String getCurrentState() {
+		return StateEnum.PAID.getValue();
+	}
+}
+
+class PublishState extends AbstractState {
+
+	@Override
+	public void acceptOrderEvent(Context context) {
+		context.setState(new NotPayState());
+	}
+
+	@Override
+	public void notPeopleAcceptEvent(Context context) {
+		context.setState(new FeedBackState());
+	}
+
+	@Override
+	public String getCurrentState() {
+		return StateEnum.PUBLISHED.getValue();
+	}
+}
+
+class ReviewState extends AbstractState {
+
+	@Override
+	public void makePriceEvent(Context context) {
+		context.setState(new PublishState());
+	}
+
+	@Override
+	public String getCurrentState() {
+		return StateEnum.REVIEWED.getValue();
+	}
+
+}
+
+````
+````java
+package com.atguigu.state.money;
+
+//环境上下文
+public class Context extends AbstractState{
+	//当前的状态 state, 根据我们的业务流程处理，不停的变化
+	private State state;
+
+    @Override
+    public void checkEvent(Context context) {
+        state.checkEvent(this);
+        getCurrentState();
+    }
+
+    @Override
+    public void checkFailEvent(Context context) {
+        state.checkFailEvent(this);
+        getCurrentState();
+    }
+
+    @Override
+    public void makePriceEvent(Context context) {
+        state.makePriceEvent(this);
+        getCurrentState();
+    }
+
+    @Override
+    public void acceptOrderEvent(Context context) {
+        state.acceptOrderEvent(this);
+        getCurrentState();
+    }
+
+    @Override
+    public void notPeopleAcceptEvent(Context context) {
+        state.notPeopleAcceptEvent(this);
+        getCurrentState();
+    }
+
+    @Override
+    public void payOrderEvent(Context context) {
+        state.payOrderEvent(this);
+        getCurrentState();
+    }
+
+    @Override
+    public void orderFailureEvent(Context context) {
+        state.orderFailureEvent(this);
+        getCurrentState();
+    }
+
+    @Override
+    public void feedBackEvent(Context context) {
+        state.feedBackEvent(this);
+        getCurrentState();
+    }
+
+    public State getState() {
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
+
+    @Override
+    public String getCurrentState() {
+        System.out.println("当前状态 : " + state.getCurrentState());
+        return state.getCurrentState();
+    }
+}
+
+````
+````java
+package com.atguigu.state.money;
+
+/**
+ * 状态接口
+ * @author Administrator
+ *
+ */
+public interface State {
+
+	/**
+     * 电审
+     */
+    void checkEvent(Context context);
+
+    /**
+     * 电审失败
+     */
+    void checkFailEvent(Context context);
+
+    /**
+     * 定价发布
+     */
+    void makePriceEvent(Context context);
+
+    /**
+     * 接单
+     */
+    void acceptOrderEvent(Context context);
+
+    /**
+     * 无人接单失效
+     */
+    void notPeopleAcceptEvent(Context context);
+
+    /**
+     * 付款
+     */
+    void payOrderEvent(Context context);
+
+    /**
+     * 接单有人支付失效
+     */
+    void orderFailureEvent(Context context);
+
+    /**
+     * 反馈
+     */
+    void feedBackEvent(Context context);
+
+
+    String getCurrentState();
+}
+
+````
+````java
+package com.atguigu.state.money;
+
+/**
+ * 状态枚举类
+ * @author Administrator
+ *
+ */
+public enum StateEnum {
+
+	 //订单生成
+    GENERATE(1, "GENERATE"),
+
+    //已审核
+    REVIEWED(2, "REVIEWED"),
+
+    //已发布
+    PUBLISHED(3, "PUBLISHED"),
+
+    //待付款
+    NOT_PAY(4, "NOT_PAY"),
+
+    //已付款
+    PAID(5, "PAID"),
+
+    //已完结
+    FEED_BACKED(6, "FEED_BACKED");
+
+    private int key;
+    private String value;
+
+    StateEnum(int key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+    public int getKey() {return key;}
+    public String getValue() {return value;}
+}
+
+````
+````java
+package com.atguigu.state.money;
+
+/**测试类*/
+public class ClientTest {
+
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		//创建context 对象
+		Context context = new Context();
+        //将当前状态设置为 PublishState
+		context.setState(new PublishState());
+        System.out.println(context.getCurrentState());
+        
+//        //publish --> not pay
+        context.acceptOrderEvent(context);
+//        //not pay --> paid
+        context.payOrderEvent(context);
+//        // 失败, 检测失败时，会抛出异常
+//        try {
+//        	context.checkFailEvent(context);
+//        	System.out.println("流程正常..");
+//		} catch (Exception e) {
+//			// TODO: handle exception
+//			System.out.println(e.getMessage());
+//		}
+        
+	}
+
+}
+
+````
+
+## 状态模式的注意事项和细节
+1) 代码有很强的可读性。状态模式将每个状态的行为封装到对应的一个类中
+2) 方便维护。将容易产生问题的 if-else 语句删除了，如果把每个状态的行为都放到一个类中，每次调用方法时都
+要判断当前是什么状态，不但会产出很多 if-else 语句，而且容易出错
+3) 符合“开闭原则”。容易增删状态
+4) 会产生很多类。每个状态都要一个对应的类，当状态过多时会产生很多类，加大维护难度
+5) 应用场景：当一个事件或者对象有很多种状态，状态之间会相互转换，对不同的状态要求有不同的行为的时候，可以考虑使用状态模式
