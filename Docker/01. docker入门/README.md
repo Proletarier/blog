@@ -16,7 +16,39 @@
 * 仓库(repository): 就是存放镜像的地方
 
 ## 安装 docker
-自己去 官网看吧
+
+CentOS7安装Docker
+
+官网中文安装参考手册
+
+https://docs.docker-cn.com/engine/installation/linux/docker-ce/centos/#prerequisites
+
+yum安装gcc相关
+````
+yum -y install gcc
+
+yum -y install gcc-c++
+````
+卸载旧版本
+````
+yum -y remove docker docker-common docker-selinux docker-engine
+
+yum -y install gcc-c++
+````
+安装需要的软件包
+````
+yum install -y yum-utils device-mapper-persistent-data lvm2
+
+````
+设置stable镜像仓库
+````
+yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+````
+更新yum软件包索引
+````
+yum makecache fast
+
+````
 
 
 ## 常用命令
