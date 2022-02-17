@@ -326,4 +326,36 @@ ES允许给函数的参数赋初始值
     </script>
 </body>
 </html>
-```
+````
+## rest参数
+
+ES6 引入 rest 参数，用于获取函数的实参，用来代替 arguments；
+
+````html
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>rest参数</title>
+</head>
+<body>
+<script>
+  // ES6 引入 rest 参数，用于获取函数的实参，用来代替 arguments；
+  // ES5获取实参的方式
+  function data() {
+    console.log(arguments);
+  }
+
+  data("大哥", "二哥", "三哥", "四哥");
+
+  // ES6的rest参数...args，rest参数必须放在最后面
+  function data(...args) {
+    console.log(args);  // fliter some every map
+  }
+
+  data("大哥", "二哥", "三哥", "四哥");
+</script>
+</body>
+</html>
+
+````
