@@ -359,3 +359,44 @@ ES6 引入 rest 参数，用于获取函数的实参，用来代替 arguments；
 </html>
 
 ````
+
+## 扩展运算符
+... 扩展运算符能将数组转换为逗号分隔的参数序列；
+
+扩展运算符（spread）也是三个点（...）。它好比 rest 参数的逆运算，将一个数组转为用逗号分隔的参
+数序列，对数组进行解
+
+````
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扩展运算符应用</title>
+</head>
+<body>
+    <div></div>
+    <div></div>
+    <div></div>
+    <script>
+        //1. 数组的合并 情圣  误杀  唐探
+        // const kuaizi = ['王太利','肖央'];
+        // const fenghuang = ['曾毅','玲花'];
+        // // const zuixuanxiaopingguo = kuaizi.concat(fenghuang);
+        // const zuixuanxiaopingguo = [...kuaizi, ...fenghuang];
+        // console.log(zuixuanxiaopingguo);
+
+        //2. 数组的克隆
+        // const sanzhihua = ['E','G','M'];
+        // const sanyecao = [...sanzhihua];//  ['E','G','M']
+        // console.log(sanyecao);
+
+        //3. 将伪数组转为真正的数组
+        const divs = document.querySelectorAll('div');
+        const divArr = [...divs];
+        console.log(divArr);// arguments
+        
+    </script>
+</body>
+</html>
+````
